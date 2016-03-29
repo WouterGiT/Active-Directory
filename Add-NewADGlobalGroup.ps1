@@ -60,7 +60,7 @@
     }
     Process {
         $ErrorActionPreference = 'Stop'
-        Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Action] Create group $groupName in $groupPath"
+        Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Action] Create group $Name in $Path"
         Try {
             Get-ADGroup -Identity $Identity -Server $Server | Out-Null
         }
