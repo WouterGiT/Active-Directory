@@ -84,5 +84,4 @@
     End {
         Remove-Variable ouCreate,Name,Path,Server,Identity
     }
-
 } #end function Add-NewADGlobalGroup
