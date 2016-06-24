@@ -43,7 +43,11 @@
         [Parameter(Mandatory=$true,
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
-        [string]$Path
+        [string]$Path,
+        [Parameter(Mandatory=$false,
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true)]
+        [string]$Description = ""
     )
 
     Begin {
@@ -55,14 +59,15 @@
             Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] Module not loaded, ActiveDirectory Module is mandatory."
             Throw
         }
-        $Identity = "CN=$Name,$Path"
-        $Server   = (Get-ADDomainController -Service PrimaryDC -Discover).HostName #Target PDC of current domain
+        $Identity       = "CN=$Name,$Path"
+        [string]$Server = (Get-ADDomainController -Service PrimaryDC -Discover).HostName #Target PDC of current domain
     }
     Process {
         $ErrorActionPreference = 'Stop'
         Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Action] Create group $Name in $Path"
         Try {
             Get-ADGroup -Identity $Identity -Server $Server | Out-Null
+            $ouCreate = $false
         }
         Catch {
             $ouCreate = $true
@@ -70,7 +75,7 @@
 
         if ($ouCreate -eq $true) {
             Try {
-                New-ADGroup -Name $Name -Path $Path -GroupScope Global -Server $Server
+                New-ADGroup -Name $Name -Path $Path -GroupScope Global -Description $Description -Server $Server 
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Status] Created"
             }
             Catch {
