@@ -51,14 +51,15 @@
             Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] Module not loaded, ActiveDirectory Module is mandatory."
             Throw
         }
-        $Identity = "OU=$Name,$Path"
-        $Server   = (Get-ADDomainController -Service PrimaryDC -Discover).HostName #Target PDC of current domain
+        $Identity       = "OU=$Name,$Path"
+        [string]$Server = (Get-ADDomainController -Service PrimaryDC -Discover).HostName #Target PDC of current domain
     }
     Process {
         $ErrorActionPreference = 'Stop'
         Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Action] Create Organizational Unit: $Name in $Path"
         Try {
             Get-ADOrganizationalUnit -Identity $Identity -Server $Server | Out-Null
+            $ouCreate = $false
         }
         Catch {
             $ouCreate = $true
