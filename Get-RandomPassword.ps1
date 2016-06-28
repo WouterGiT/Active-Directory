@@ -1,4 +1,5 @@
-﻿Function Get-RandomPassword {
+﻿Function Get-RandomPassword
+{
     <#
     .SYNOPSIS
         Create a random Password
@@ -44,9 +45,12 @@
         $strSymbols        = "!%&*()+=/?{}[],.:"
         $rand              = New-Object -TypeName System.Random
     }
+
+
     Process
     {
-        if ($passwordLength -lt 8) {
+        if ($passwordLength -lt 8)
+        {
             $passwordLength = 8
         } 
         for ($a=1; $a -le $passwordLength; $a++)
@@ -55,7 +59,9 @@
             {
           	    $b = $rand.next(0,4) + $a
           	    $b = $b % 4 + 1
-          	} else {
+          	}
+            else
+            {
                 $b = $a
             }
           	switch ($b)
@@ -70,6 +76,8 @@
             $randomPassword += $charset[$number]
         }
     }
+
+
     End
     {
         return $randomPassword

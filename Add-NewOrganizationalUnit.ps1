@@ -1,4 +1,5 @@
-﻿Function Add-NewOrganizationalUnit {
+﻿Function Add-NewOrganizationalUnit
+{
     <#
     .SYNOPSIS
         Create a new Organizational Unit
@@ -38,48 +39,65 @@
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [string]$Name,
+
         [Parameter(ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [string]$Path = 'OU=Customers,OU=Sales,DC=prutser,DC=me' #Set this path as default
     )
-    Begin {
+
+    Begin
+    {
         $ErrorActionPreference = 'Stop'
-        Try {
+        Try
+        {
             Import-Module ActiveDirectory
         }
-        Catch {
+        Catch
+        {
             Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] Module not loaded, ActiveDirectory Module is mandatory."
             Throw
         }
         $Identity       = "OU=$Name,$Path"
         [string]$Server = (Get-ADDomainController -Service PrimaryDC -Discover).HostName #Target PDC of current domain
     }
-    Process {
+
+
+    Process
+    {
         $ErrorActionPreference = 'Stop'
         Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Action] Create Organizational Unit: $Name in $Path"
-        Try {
+        Try
+        {
             Get-ADOrganizationalUnit -Identity $Identity -Server $Server | Out-Null
             $ouCreate = $false
         }
-        Catch {
+        Catch
+        {
             $ouCreate = $true
         }
 
-        if ($ouCreate -eq $true) {
-            Try {
+        if ($ouCreate -eq $true)
+        {
+            Try
+            {
                 New-ADOrganizationalUnit -Name $Name -Path $Path -Server $Server
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Status] Created"
             }
-            Catch {
+            Catch
+            {
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] Not created!"
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] $($_.Exception.Message)"
             }
-        } else {
+        }
+        else
+        {
             Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Status] No need to create already exists"
         }
     }
-    End {
+
+
+    End
+    {
         Remove-Variable ouCreate,Name,Path,Server,Identity
     }
-
 } #end function Add-NewOrganizationalUnit

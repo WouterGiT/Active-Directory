@@ -1,4 +1,5 @@
-﻿Function Add-NewADGlobalGroup {
+﻿Function Add-NewADGlobalGroup
+{
     <#
     .SYNOPSIS
         Create a new Active Directory Global Group
@@ -40,53 +41,71 @@
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [string]$Name,
+
         [Parameter(Mandatory=$true,
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [string]$Path,
+
         [Parameter(Mandatory=$false,
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true)]
         [string]$Description = ""
     )
 
-    Begin {
+    Begin
+    {
         $ErrorActionPreference = 'Stop'
-        Try {
+        Try
+        {
             Import-Module ActiveDirectory
         }
-        Catch {
+        Catch
+        {
             Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] Module not loaded, ActiveDirectory Module is mandatory."
             Throw
         }
         $Identity       = "CN=$Name,$Path"
         [string]$Server = (Get-ADDomainController -Service PrimaryDC -Discover).HostName #Target PDC of current domain
     }
-    Process {
+
+
+    Process
+    {
         $ErrorActionPreference = 'Stop'
         Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Action] Create group $Name in $Path"
-        Try {
+        Try
+        {
             Get-ADGroup -Identity $Identity -Server $Server | Out-Null
             $ouCreate = $false
         }
-        Catch {
+        Catch
+        {
             $ouCreate = $true
         }
 
-        if ($ouCreate -eq $true) {
-            Try {
+        if ($ouCreate -eq $true)
+        {
+            Try
+            {
                 New-ADGroup -Name $Name -Path $Path -GroupScope Global -Description $Description -Server $Server 
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Status] Created"
             }
-            Catch {
+            Catch
+            {
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] Not created!"
                 Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Error] $($_.Exception.Message)"
             }
-        } else {
+        }
+        else
+        {
             Write-Output "[$(Get-Date -UFormat "%Y-%m-%d %H:%M:%S")] - [Status] No need to create already exists"
         }
     }
-    End {
+
+
+    End
+    {
         Remove-Variable ouCreate,Name,Path,Server,Identity
     }
 } #end function Add-NewADGlobalGroup
