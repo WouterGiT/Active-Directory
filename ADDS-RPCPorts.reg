@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Rpc\Internet]
+"Ports"=hex(7):34,00,30,00,30,00,30,00,30,00,2d,00,34,00,30,00,39,00,39,00,39,\
+  00,00,00,00,00
+"PortsInternetAvailable"="Y"
+"UseInternetPorts"="Y"
